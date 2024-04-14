@@ -1,0 +1,34 @@
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content"> 
+      <div class="modal-header">
+        <h5 class="modal-title"  id="exampleModalLabel" >Edit Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="FromModalAddProject" action="edittask" method="POST">  
+        <div class="modal-body">
+            <div class="mb-4">
+                <input type="text" class="form-control" name="taskTitle" id="editTaskTitle" placeholder="Task Name"  required>
+            </div>
+            <div class="mb-4">
+                <input type="text" class="form-control" name="collaborators" id="editTaskCollaborators" placeholder="Collaborators' emails, seperate each email with a coma ','" value="" >
+            </div>
+            <div class="mb-4">
+              <textarea type="text" class="form-control" name="description" id="editTaskDescription" placeholder="Description" style="height: 6rem; resize: none;" required></textarea>
+            </div>
+            <div class="mb-4">
+              <textarea type="text" class="form-control" name="pseudoCode" id="editTaskPseudoCode" placeholder="Pseudo-Code" style="height: 10rem; resize: none;" required></textarea>
+            </div>
+            <div class="mb-4">
+              <textarea type="text" class="form-control" name="answer" id="editTaskAnswer" placeholder="Answer" style="height: 10rem; resize: none;" required ></textarea>
+            </div>
+            <input type="hidden" id="editTaskID" name="taskID">
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+          <button type="button" class="btn btn-secondary btn-md me-1"  data-bs-dismiss="modal">No,Cancel </button>
+          <button type="submit" class="btn btn-primary btn-md ms-1">Yes,Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

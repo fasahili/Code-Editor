@@ -1,0 +1,471 @@
+<div class="container">
+    <div class="row h-100">
+        <% if(!task) { %>
+            <div class="col-12 h-100 p-0">
+                <div class="h-100" id="CodeEditorWriting">
+                    <textarea class="Editor" id="Editor" name="pythonInputFromEditor" spellcheck="false"></textarea>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="col-md-8 h-100 p-0">
+                <div class="h-100" id="CodeEditorWriting">
+                    <textarea class="Editor" id="Editor" name="pythonInputFromEditor" spellcheck="false"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4" id="right-box-codeUser">
+
+                <div class="container">
+                    <div class="tab-box">
+                        <button class="tab_btn active" id="DescriptionButton">Description</button>
+                        <button class="tab_btn" id="HintButton">Hint</button>
+                        <button class="tab_btn" id="AnswerButton">Answer</button>
+                        <div class="line_under_button"></div>
+                    </div>
+                   
+                    <div class="content_box">
+                        <div class="content active">
+                            <p id="ShowDescription"></p>
+                        </div>
+                        <div class="content">
+                            <p id="ShowHint"></p>
+                        </div>
+                        <div class="content">
+                            <pre id="ShowAnswer"></pre>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+
+
+<script>
+   
+    const descriptionButton = document.querySelector("#DescriptionButton");
+    const answerButton = document.querySelector("#AnswerButton");
+    const hintButton = document.querySelector("#HintButton");
+    const showHint = document.querySelector("#ShowHint");
+    const showAnswer = document.querySelector("#ShowAnswer");
+    const showDescription = document.querySelector("#ShowDescription");
+    const tabs = document.querySelectorAll(".tab_btn");
+    const all_content = document.querySelectorAll(".content");
+    
+    answerButton.disabled = true;
+    let hintOpenedTime = null;
+
+    tabs.forEach((tab, index) => {
+
+        tab.addEventListener("click", (e) => {
+            tabs.forEach((tab) => {
+                tab.classList.remove("active");
+            });
+            tab.classList.add("active");
+
+            var line = document.querySelector(".line_under_button");
+            line.style.width = e.target.offsetWidth + "px";
+            line.style.left = e.target.offsetLeft + "px";
+
+            all_content.forEach((content) => {
+                content.classList.remove("active");
+            });
+            all_content[index].classList.add("active");
+
+            if (tab === hintButton) {
+                answerButton.disabled = false;
+            }
+            hintButton.addEventListener('click', () => {
+                hintOpenedTime = Date.now();
+            });
+            answerButton.addEventListener('click', () => {
+                if (!hintOpenedTime || (Date.now() - hintOpenedTime) <30000) {
+                    alert('You need to wait 30 seconds before opening the answer!');
+                    return;
+                }
+            });
+        });
+    });
+
+    {
+        const taskDescription = '<%- JSON.stringify(task.description) %>'.slice(1, -1);
+        showDescription.innerText = taskDescription;
+    };
+
+    hintButton?.addEventListener("click", () => {
+        const taskPseudo = '<%- JSON.stringify(task.pseudoCode) %>'.slice(1, -1);
+        showHint.innerText = taskPseudo;
+    });
+
+
+    answerButton?.addEventListener("click", async () => {
+        const urlString =  window.location.href;
+        let queryString = new URLSearchParams(urlString);
+        const [taskId, projectId] = queryString.values();
+        showAnswer.textContent ;
+        let answer = "";
+        const taskAnswer = await fetch("/get_answer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                taskId,
+                projectId,
+                answer
+            }),
+        })
+        const taskAnswerJson = await taskAnswer.json();
+        answer = taskAnswerJson.answer;
+        answer = answer;
+        showAnswer.textContent += answer;
+    });
+
+
+
+    //Auto Save
+    const codeTextArea = document.getElementById("Editor");
+    let lastSavedCode = codeTextArea.value;
+    codeTextArea.addEventListener("input", () => {
+        if (codeTextArea.value !== lastSavedCode) {
+            lastSavedCode = codeTextArea.value;
+            saveCodeToServer(lastSavedCode);
+        }
+    });
+
+    setInterval(() => {
+        if (codeTextArea.value !== lastSavedCode) {
+            lastSavedCode = codeTextArea.value;
+            saveCodeToServer(lastSavedCode);
+        }
+    }, 5000);
+
+    function saveCodeToServer(code) {
+        fetch("/autosave", {
+            method: "POST",
+            body: JSON.stringify({ code }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    }
+    const textarea = document.getElementById("Editor");
+    textarea.focus();
+
+    const editor = CodeMirror.fromTextArea(textarea, {
+        mode: "python",
+        theme: "material",
+        lineNumbers: true,
+        indentUnit: 4,
+        indentWithTabs: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        extraKeys: {
+            "Ctrl-Enter": () => {
+                document.getElementById("OutputButton").click();
+            },
+            "Ctrl-S": () => {
+                document.getElementById("download-sidebar").click();
+            },
+        },
+        lineWrapping: true,
+        autofocus: true
+    });
+
+    
+    editor.on("change", () => {
+        textarea.value = editor.getValue();
+    });
+
+    editor.setSize(
+        null,
+        document.querySelector("#CodeEditorWriting").offsetHeight
+    );
+
+    textarea.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            document.getElementById("download-sidebar").click();
+            return;
+        }
+        if (e.ctrlKey && e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("OutputButton").click();
+            return;
+        }
+        if (e.shiftKey && e.key === "Tab") {
+            e.preventDefault();
+            pressShiftTabButton(e);
+            return;
+        }
+        if (e.key === "Tab") {
+            pressTabButton(e);
+            return;
+        }
+        if (e.key === "Enter") {
+            pressEnterButtonForNewLine(e);
+            return;
+        }
+    });
+
+    textarea.addEventListener("keypress", (e) => {
+        if (e.key === "(") {
+            putParenthesesAroundSelection(e.target, e, "(");
+            return;
+        }
+        if (e.key === "[") {
+            putParenthesesAroundSelection(e.target, e, "[");
+            return;
+        }
+        if (e.key === "{") {
+            putParenthesesAroundSelection(e.target, e, "{");
+            return;
+        }
+        if (e.key === ")") {
+            putClosingParentheses(e.target, e, ")");
+            return;
+        }
+        if (e.key === "]") {
+            putClosingParentheses(e.target, e, "]");
+            return;
+        }
+        if (e.key === "}") {
+            putClosingParentheses(e.target, e, "}");
+            return;
+        }
+        if (e.key === '"') {
+            putDoubleQuotationsAroundSelection(e.target, e);
+            return;
+        }
+        if (e.key === "'") {
+            putSingleQuotationsAroundSelection(e.target, e);
+            return;
+        }
+    });
+
+    const pressShiftTabButton = e => {
+        // when pressing shift + tab, remove 4 spaces from the beginning of the line
+        e.preventDefault();
+
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        const text = e.target.value;
+        const before = text.substring(0, start);
+        const after = text.substring(end);
+
+        const previousLine = before.substring(0, start).split("\n").pop();
+        const previousLineIndentation = previousLine.match(/^\s*/)[0];
+
+        if (previousLineIndentation.length >= 4) {
+            e.target.value = `${before.substring(
+                0,
+                before.length - 4
+            )}${after}`;
+            e.target.selectionStart = e.target.selectionEnd =
+                start - 4;
+        }
+    }
+
+    /**
+     * Pressing the tab button will indent (insert) 4 spaces at the cursor position
+     * @param {KeyboardEvent} e
+     * @returns {void}
+     */
+    const pressTabButton = (e) => {
+        e.preventDefault();
+
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        const text = e.target.value;
+        const before = text.substring(0, start);
+        const after = text.substring(end);
+
+        e.target.value = `${before}    ${after}`;
+        e.target.selectionStart = e.target.selectionEnd = start + 4;
+    };
+
+    /**
+     * Pressing the enter button after a `:`, `{`, `[`, or `(',' will insert a new line with the same indentation as the previous line
+     * @param {KeyboardEvent} e
+     * @returns {void}
+     */
+    const pressEnterButtonForNewLine = (e) => {
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        const text = e.target.value;
+        const before = text.substring(0, start);
+        const after = text.substring(end);
+
+        const previousLine = before.substring(0, start).split("\n").pop();
+        const previousLineIndentation = previousLine.match(/^\s*/)[0];
+
+        if (previousLine.endsWith(":")) {
+            e.preventDefault();
+            const additionalIndentation = "    ";
+            e.target.value = `${before}\n${previousLineIndentation}${additionalIndentation}${after}`;
+            e.target.selectionStart = e.target.selectionEnd =
+                start +
+                previousLineIndentation.length +
+                additionalIndentation.length +
+                1;
+        } else if (
+            previousLine.endsWith("{") ||
+            previousLine.endsWith("[") ||
+            previousLine.endsWith("(")
+        ) {
+            const previousChar = before.slice(-1);
+            const nextChar = after.charAt(0);
+
+            if (
+                (previousChar === "{" && nextChar === "}") ||
+                (previousChar === "[" && nextChar === "]") ||
+                (previousChar === "(" && nextChar === ")")
+            ) {
+                e.preventDefault();
+                const indentation = previousLineIndentation + "    ";
+                e.target.value = `${before}\n${indentation}\n${previousLineIndentation}${after}`;
+                e.target.selectionStart = e.target.selectionEnd =
+                    start + indentation.length + 1;
+            }
+        } else if (previousLineIndentation) {
+            e.preventDefault();
+            const indentation = previousLineIndentation;
+            e.target.value = `${before}\n${indentation}${after}`;
+            e.target.selectionStart = e.target.selectionEnd =
+                start + previousLineIndentation.length + 1;
+        }
+    };
+
+    /**
+     * Put parentheses around the selected text
+     * For example, if the selected text is "Hello", then the result will be "(Hello)" or "[Hello]" or "{Hello}"
+     * @param {HTMLElement} textarea
+     * @param {KeyboardEvent} e
+     * @param {string} parenthesesCharacter
+     * @returns {void}
+     */
+    const putParenthesesAroundSelection = (
+        textarea,
+        e,
+        parenthesesCharacter
+    ) => {
+        e.preventDefault();
+
+        const text = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+
+        if (parenthesesCharacter === "(") {
+            textarea.value = `${text.slice(0, selectionStart)}(${text.slice(
+                selectionStart,
+                selectionEnd
+            )})${text.slice(selectionEnd)}`;
+        } else if (parenthesesCharacter === "[") {
+            textarea.value = `${text.slice(0, selectionStart)}[${text.slice(
+                selectionStart,
+                selectionEnd
+            )}]${text.slice(selectionEnd)}`;
+        } else if (parenthesesCharacter === "{") {
+            textarea.value = `${text.slice(0, selectionStart)}{${text.slice(
+                selectionStart,
+                selectionEnd
+            )}}${text.slice(selectionEnd)}`;
+        }
+        textarea.selectionStart = selectionStart + 1;
+        textarea.selectionEnd = selectionEnd + 1;
+    };
+
+    /**
+     * When having "(Hello)" and having the cursor at the end of the parentheses, pressing the closing parentheses will move the cursor to the right of the parentheses
+     * @param {HTMLElement} textarea
+     * @param {KeyboardEvent} e
+     * @returns {void}
+     */
+    const putClosingParentheses = (textarea, e, closingParentheses) => {
+        e.preventDefault();
+
+        const text = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+
+        if (
+            (text[selectionStart] === ")" && text[selectionEnd] === ")") ||
+            (text[selectionStart] === "]" && text[selectionEnd] === "]") ||
+            (text[selectionStart] === "}" && text[selectionEnd] === "}")
+        ) {
+            textarea.selectionStart = selectionEnd + 1;
+            textarea.selectionEnd = selectionEnd + 1;
+        } else {
+            if (closingParentheses === ")") {
+                textarea.value = `${text.slice(0, selectionEnd)})${text.slice(
+                    selectionEnd
+                )}`;
+            } else if (closingParentheses === "]") {
+                textarea.value = `${text.slice(0, selectionEnd)}]${text.slice(
+                    selectionEnd
+                )}`;
+            } else if (closingParentheses === "}") {
+                textarea.value = `${text.slice(0, selectionEnd)}}${text.slice(
+                    selectionEnd
+                )}`;
+            }
+            textarea.selectionStart = selectionEnd + 1;
+            textarea.selectionEnd = selectionEnd + 1;
+        }
+    };
+
+    /**
+     * Put double quotations around the selected text
+     * For example, if the selected text is Hello, then the result will be "Hello"
+     * @param {HTMLElement} textarea
+     * @param {KeyboardEvent} e
+     * @returns {void}
+     */
+    const putDoubleQuotationsAroundSelection = (textarea, e) => {
+        e.preventDefault();
+
+        const text = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+
+        if (text[selectionStart] === '"' && text[selectionEnd] === '"') {
+            textarea.selectionStart = selectionEnd + 1;
+            textarea.selectionEnd = selectionEnd + 1;
+        } else {
+            textarea.value = `${text.slice(0, selectionStart)}"${text.slice(
+                selectionStart,
+                selectionEnd
+            )}"${text.slice(selectionEnd)}`;
+            textarea.selectionStart = selectionStart + 1;
+            textarea.selectionEnd = selectionEnd + 1;
+        }
+    };
+
+    /**
+     * Put single quotations around the selected text
+     * For example, if the selected text is Hello, then the result will be 'Hello'
+     * @param {HTMLElement} textarea
+     * @param {KeyboardEvent} e
+     * @returns {void}
+     */
+    const putSingleQuotationsAroundSelection = (textarea, e) => {
+        e.preventDefault();
+
+        const text = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+
+        if (text[selectionStart] === "'" && text[selectionEnd] === "'") {
+            textarea.selectionStart = selectionEnd + 1;
+            textarea.selectionEnd = selectionEnd + 1;
+        } else {
+            textarea.value = `${text.slice(0, selectionStart)}'${text.slice(
+                selectionStart,
+                selectionEnd
+            )}'${text.slice(selectionEnd)}`;
+            textarea.selectionStart = selectionStart + 1;
+            textarea.selectionEnd = selectionEnd + 1;
+        }
+    };
+</script>

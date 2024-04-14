@@ -1,0 +1,260 @@
+<%- include('../invitationModal'); %>
+  <% if(!task) { %>
+
+
+    <div class="container" id="sidebar-guest">
+      <div id="p-as-guset">
+        <h1 id="h-guest" class="d-flex justify-content-center mb-4 mt-0" >As a Guest</h1>
+        <p id="p-sb-guest">You can use most of the site's features and content</p>
+          <hr>
+        <a href="home" id="sb-go-home-button" class="d-flex justify-content-center mb-4 mt-0">Go back to home page</a>
+        <a href="/login"><button id="log-in-sidebar-ce-page">LOG IN</button></a>
+      </div>
+    </div>
+    <% } else { %>
+      <div id="div-of-first-section-sidebar">
+        <a class="fa-sharp fa-solid fa-arrow-left" href="/profile" id="arrow-left-sidebar"></a>
+        <i class="fa-sharp fa-solid fa-handshake-angle" id="hande-shake-sidebar"></i>
+        <input type="text" placeholder="Project Name - Task" id="name-of-project" name="email">
+      </div>
+      <div id="second-section-sidebar">
+        <div id="items-second-section-sidebar">
+          <a class="fa-solid fa-folder-plus" id="folder-plus-sidebar" data-bs-toggle="modal" data-bs-target="#new-folder-modal"></a>
+          <a href="#" id="file-plus-sidebar" data-bs-toggle="modal" data-bs-target="#new-file-modal">
+            <i class="fa-sharp fa-solid fa-file-circle-plus"></i>
+          </a>
+
+          <a href="#" id="download-sidebar" data-bs-toggle="modal" data-bs-target="#download-modal">
+            <i class="fa-sharp fa-solid fa-download"></i>
+          </a>
+
+          <div class="modal fade" id="download-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+            aria-labelledby="download-modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <form>
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="download-modalLabel">Download</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label for="newFileZipName" class="mb-2">New file name Zip:</label>
+                    <input type="text" id="newFileZipName" name="newFileZipName" class="form-control mb-3">
+                  </div>
+                  <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="create-new-zip-file" value="Download" type="submit" data-bs-dismiss="modal"
+                      class="btn btn-primary">Download</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="new-file-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+            aria-labelledby="new-file-modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <form>
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="new-file-modalLabel">New File</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label for="newFileName" class="mb-3">New file name:</label>
+                    <input type="text" id="newFileName" name="newFileName" class="form-control mb-3">
+                  </div>
+                  <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Create" id="create-new-file" class="btn btn-primary">Create</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <a class="fa-sharp fa-solid fa-cloud-arrow-up" id="cloud-arrow-up-sidebar"></a>
+          <a class="ffa-sharp fa-solid fa-users" id="users-sidebar" data-bs-toggle="modal"
+            data-bs-target="#invitationBody"></a>
+        </div>
+      </div>
+      <div id="NewFolderModal" class="FolderModal">
+        <div class="ModalContent">
+          <span id="close">&times;</span>
+          <h2>Create New Folder</h2>
+          <label for="folderName">Folder Name:</label>
+          <input type="text" id="FolderName" name="FolderName">
+          <button type="submit" id="CreateFolderBtn" value="Create Folder">Create Folder</button>
+        </div>
+      </div>
+      <!-- Folder list -->
+      <div id="FolderList">
+        <% for (let folder of folders) { %>
+          <div class="FolderItems">
+            <% if (folder.endsWith('.py')) { %>
+              <i class="bi bi-filetype-py"></i>
+              <%= folder %>
+            <% } else { %>
+              <i class="bi bi-arrow-right"></i>
+              <%= folder %>
+              
+            <% } %>
+          </div> 
+
+
+        <% } %>
+      </div>
+
+      <% } %> 
+
+        <script type='text/javascript'>
+          const span = document.getElementsByClassName("close")[0];
+          const modal = document.getElementById("myModal");
+          const createNewZipFileBtn = document.getElementById("create-new-zip-file");
+          const createNewFileButton = document.getElementById("create-new-file");
+          const leftArrow = document.querySelector("#arrow-left-sidebar")
+          const handShake = document.querySelector("#hande-shake-sidebar")
+          const addFolder = document.querySelector("#folder-plus-sidebar")
+          const addFile = document.querySelector("#file-plus-sidebar")
+          const downloadFile = document.querySelector("#download-sidebar")
+          const uploadFile = document.querySelector("#cloud-arrow-up-sidebar")
+          const users = document.querySelector("#users-sidebar")
+          const nameOfProject = document.getElementById("name-of-project");
+          const newFolderModal = document.getElementById("NewFolderModal");
+          const createFolderBtn = document.getElementById("CreateFolderBtn");
+          const folderList = document.getElementById("FolderList");
+          const closeBtn = document.querySelector("#close")
+          const invitationModal = document.getElementById('invitationBody');
+
+          invitationModal.addEventListener('show.bs.modal', event => {
+            console.log("inside eventListener");
+            const urlString = window.location.href;
+            let queryString = new URLSearchParams(urlString);
+            const [taskID, projectID] = queryString.values();
+            invitationModal.querySelector('#invitationTaskID').setAttribute('value', taskID);
+            invitationModal.querySelector('#invitationProjectID').setAttribute('value', projectID);
+          });
+          leftArrow.addEventListener("click", () => {
+            leftArrow.style.textDecoration = "none"
+          })
+          addFolder.addEventListener("click", () => {
+            newFolderModal.style.display = "block";
+          });
+          window.onclick = (event) => {
+            if (event.target == newFolderModal) {
+              newFolderModal.style.display = "none";
+            }
+          };
+          createFolderBtn?.addEventListener("click", async (e) => {
+            const urlString = window.location.href;
+            let queryString = new URLSearchParams(urlString);
+            const [taskID, projectID] = queryString.values();
+
+            const folderNameInput = document.getElementById("FolderName").value;
+            const response = await fetch("/code/add-folder", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({taskID,projectID,
+                folderNameInput
+
+              }),
+
+            });
+            newFolderModal.style.display = "none";
+            document.getElementById("newFolderName").value = "";
+            const data = await response.json();
+
+          });
+
+          closeBtn.addEventListener("click", () => {
+            newFolderModal.style.display = "none";
+          })
+
+          addFile?.addEventListener("click", () => {
+            modal.style.display = "block";
+          })
+
+          span?.addEventListener("click", () => {
+            modal.style.display = "none";
+          })
+
+          window.onclick = function (event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          }
+
+          createNewFileButton?.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const newFileName = document.getElementById("newFileName").value;
+            const response = await fetch("/code/newFile", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ newFileName, }),
+            });
+            const data = await response.json();
+            console.log(data);
+            if (data) {
+              window.alert(data.message)
+            }
+          });
+
+          createNewZipFileBtn?.addEventListener("click", async function (event) {
+            event.preventDefault();
+            const newFileZipName = document.getElementById("newFileZipName").value;
+            try {
+              const response = await fetch("/code/newZipFile");
+              const blob = await response.blob();
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = newFileZipName + ".zip";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              // modal.style.display = "none"; // close the modal
+            } catch (error) {
+              console.error(error);
+              res.status(500).render("../views/serverError", { error: error.message });
+            }
+          });
+
+
+          uploadFile?.addEventListener("click", async () => {
+
+
+            const userResponse = await fetch('/upload-dropbox', {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+          });
+
+          handShake?.addEventListener("click", async () => {
+            const email = nameOfProject.value.trim();
+            if (email) {
+              fetch('/invitation', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email }),
+              })
+              const data = await response.json();
+              if (data) {
+                window.alert(data.message)
+              }
+            }
+          });
+
+          const input = document.getElementById('name-of-project');
+          input?.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              fetch('/updateProjectName', { method: "POST" })
+            }
+          });
+        </script>

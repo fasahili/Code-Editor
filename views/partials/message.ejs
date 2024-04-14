@@ -1,0 +1,25 @@
+<%if (message) { %>
+<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+  <%- message %>
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+<% } else if (errors && errors.length > 0) { %>
+<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+  <ul>
+    <% for (let i = 0; i < errors.length; i++) { %>
+    <li><%= errors[i].msg %></li>
+    <% } %>
+  </ul>
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+<% } %>

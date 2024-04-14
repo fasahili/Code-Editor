@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+<div class="dashboardDiv container-fluid">
+  <div>
+    <h3 class="chartType">BAR CHART</h3>
+    <canvas id="myChart" ></canvas>
+  </div>
+  <div>
+    <h3 class="chartType"> PIE CHART</h3>
+    <canvas id="myChart2" ></canvas>
+  </div>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const barChart = document.getElementById('myChart');
+
+    new Chart(barChart, {
+      type: 'bar',
+      data: {
+        labels: "<%= months %>".split(','),
+        datasets: [{
+          label: '# of Votes',
+          data: "<%= counts %>".split(','),
+          borderWidth: 1,
+          backgroundColor: [
+           'white',
+           'black'
+]
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    var pieChart = document.getElementById('myChart2').getContext('2d');
+    var myPieChart = new Chart(pieChart, {
+     type: 'pie',
+     data: {
+    labels:['True','Flase' ],
+    datasets: [{
+      label: 'Tasks Done',
+      data: "<%= tasksDone %>".split(','),
+      backgroundColor: [
+      'white',
+      'black'
+]
+,
+      hoverOffset: 4
+    }]
+
+  },
+  options: {
+    responsive: true
+  }
+})
+  </script>
+<%- include('partials/footer') %>

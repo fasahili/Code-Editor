@@ -1,0 +1,30 @@
+
+<div class="modal fade" id="viewTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content"> 
+        <div class="modal-header">
+          <h5 class="modal-title"  id="exampleModalLabel" >Add Project</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form class="FromModalAddProject" action="evaluatetask" method="POST">  
+          <div class="modal-body">
+            <div class="mb-4">
+                <label for="evalationRange" class="form-label">Points</label>
+                <input type="range"  min="0" max="5" name="evaluation" id="evaluationRange">
+            </div>
+            <div class="mb-4">
+              <textarea type="text" class="form-control" name="notes" id="evaluateTaskNotes" placeholder="Description" style="height: 6rem; resize: none;" required></textarea>
+            </div>
+            <input type="hidden" id="evaluateTaskID" name="taskID">
+          </div>
+          <div class="d-flex justify-content-center mb-3">
+            <div>
+              <button type="button" class="btn btn-secondary btn-md"  data-bs-dismiss="modal">No,Cancel </button>
+              <button type="submit" class="btn btn-primary btn-md">Yes,Confirm</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> 
+  

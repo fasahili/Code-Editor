@@ -1,0 +1,201 @@
+<%- include('partials/header'); %>
+    <% if(!user) { %>
+        <div class="HomeBody pb-5">
+            <nav class="navbar">
+                <div class="container-fluid">
+                    <div class="d-flex mt-2 ms-3 me-auto align-items-center">
+                        <img src="/images/letsCodeLogo.svg" alt="Logo" width="70" height="70">
+                        <span class="HighlightedText h2 ms-3">Let's Code</span>
+                        <% } else { %>
+                            <div class="HomeBodyUser">
+                                <nav class="navbar">
+                                    <div class="container-fluid">
+                                        <div class="d-flex mt-2 ms-3 me-auto align-items-center">
+                                            <img class="ProfImgUser" src="/images/my-profile-photo.jpg">
+                                            <div class="ms-2 d-flex flex-column">
+                                                <span class="PersonalNameSpan">
+                                                    <%= user.firstName %>
+                                                </span>
+                                                <span>
+                                                    <%= user.lastName %>
+                                                </span>
+                                            </div>
+                                            <% } %>
+                                        </div>
+                                        <% if(!user) { %>
+                                            <div class="d-flex mx-auto align-items-center">
+                                                <a class="btn me-2 LoginButton" href="#aboutUs">About us</a>
+                                                <a class="btn me-2 LoginButton" href="/"><span class="h3 CyanTextShadow">Home</span></a>
+                                                <a class="btn me-2 LoginButton" href="#ContactUs">Contact us</a>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="d-flex mx-auto align-items-center">
+                                                    <a class="btn me-2 LoginButton" href="#aboutUs">About us</a>
+                                                    <a class="btn me-2 LoginButton" href="/"><span class="h3 CyanTextShadowUser">Home</span></a>
+                                                    <a class="btn me-2 LoginButton" href="#ContactUs">Contact us</a>
+                                                </div>
+                                                <% } %>
+                                        
+                                        <div class="d-flex ms-auto me-3">
+                                            <% if(!user) { %>
+                                                <a href="signup" class="btn btn-primary me-3 SignupButton">Sign up</a>
+                                                <a href="login" class="btn me-2 LoginButton">Log in</a>
+                                                <% } else { %>
+                                                    <a href="dashboard" class="dashboardLink"><i
+                                                            class="bi bi-bar-chart-fill dashboardImg"></i></a>
+                                                    <img src="/images/logo-let_sCode-userHome.jpg" alt="Logo" width="90"
+                                                        height="90" class="LetsCodeIconUser">
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                </nav>
+                                <div class="d-flex flex-wrap">
+
+                                    <% if(!user) { %>
+                                        <div class="HomeDivLeft align-items-center mt-5">
+                                            <p class="ParagraphHome">Unleash Your<br><span
+                                                    class="CyanTextColor">Creativity</span><br>With<br>Let's Code</p>
+
+                                            <a class="btn btn-primary btn-lg GetStartedButton mt-4 ps-4" href="code">
+                                                Get Started<img src="/images/getStarted.png" alt="Right arrow"
+                                                    class="GetStartedButtonLogo p-1 mx-1">
+                                                </a>
+                                        </div>
+                                        
+                                        <%} else { %>
+                                            <div class="HomeDivLeft align-items-center mt-5">
+                                                <p class="ParagraphHome">Unleash Your<br><span
+                                                        class="CyanTextColorUser">Creativity</span><br>With<br>Let's Code</p>
+                                                <a class="btn btn-primary btn-lg GetStartedButtonUser mt-4 ps-4" href="/profile">
+                                                    Get Started<img src="/images/getStarted.png" alt="Right arrow"
+                                                        class="GetStartedButtonLogoUser p-1 mx-1">
+                                                </a>
+                                            </div>
+                                            <% } %>
+
+                                                <div class="HomeDivRight">
+                                                    <% if(!user) { %>
+                                                        <div class="Box"><img src="/images/homeImage1.jpg"
+                                                                alt="Code edit vector image over keyboard"
+                                                                class="HomeImageOne">
+                                                        </div>
+                                                        <div class="Box"><img src="/images/homeImage2.jpg"
+                                                                alt="Code editor" class="HomeImageTwo"></div>
+                                                        <div class="Box"><img src="/images/homeImage3.jpg"
+                                                                alt="Python logo" class="HomeImageThree"></div>
+                                                        <%} else { %>
+                                                            <div class="Box"><img src="/images/homeImage4.jpg"
+                                                                    alt="Code edit vector image over keyboard"
+                                                                    class="HomeImageOneUser"></div>
+                                                            <div class="Box"><img src="/images/homeImage5.jpg"
+                                                                    alt="Code editor" class="HomeImageTwoUser"></div>
+                                                            <div class="Box"><img src="/images/homeImage6.jpg"
+                                                                    alt="Python logo" class="HomeImageThreeUser"></div>
+                                                            <% } %>
+                                                </div>
+                                </div>
+                                <section class="aboutUsBody mt-5" id="aboutUs">
+                                    <div class="aboutUs">
+                                        <div class="aboutUsContent">
+                                            <h2>About Us</h2>
+                                            <h5>Code editor for <span class="aboutUsSpan">{python}</span></h5>
+                                            <p>The number of IT jobs have been increasing rapidly in the recent years,
+                                                IT majors enrollment rate
+                                                have been increasing with the same rate as well; thus the need for an
+                                                easy accessed online code
+                                                editor have arrived. Many IT students can't afford to buy a laptop to
+                                                pursue their goals of
+                                                becoming a successful programmer, with Let's Code we can solve such a
+                                                problem by offering a free
+                                                and educational code editing platform; to help the newbie programmers
+                                                and employees.</p>
+                                            <div class="aboutUsButton">
+                                                <% if(!user) { %>
+                                                <a href="code" class="aboutUsFirstButton">Try your code</a>
+                                                <%} else { %>
+                                                <a href="profile" class="aboutUsFirstButton">Try your code</a>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section class="contactBody pb-5" id="ContactUs">
+                                    <div class="leftColumn mt-4 mb-4">
+                                        <div class="container contactLeft mt-3 mb-3">
+                                            <%- include('./partials/message',{message,errors}); %>
+                                                <form method="post" action="/send">
+
+                                                    <label for="fname">First Name</label>
+                                                    <input type="text" class="HomeContactUsForm" name="firstName"
+                                                        placeholder="Your first name.." required>
+                                                    <label for="lname">Last Name</label>
+                                                    <input type="text" class="HomeContactUsForm" name="lastName"
+                                                        placeholder="Your last name.." required>
+
+                                                    <label for="email">Email:</label>
+                                                    <input type="email" name="email" class="HomeContactUsForm"
+                                                        placeholder="example@name.com" required>
+
+                                                    <label for="subject">Subject</label>
+                                                    <textarea class="HomeContactUsForm" name="subject"
+                                                        id="contactUsSubject" placeholder="Write something.."
+                                                        required></textarea>
+
+                                                    <input type="submit" id="submit">
+                                                </form>
+                                        </div>
+                                    </div>
+                                    <div class="rightColumn mt-2">
+                                        <div class="container contactFormRight bg-primary">
+                                            <h3 class="mb-4 mt-2">Contact us</h3>
+                                            <div class="col-md-5 d-flex align-items-stretch w-100">
+                                                <div class="info-wrap  w-100 ">
+                                                    <div class="dbox w-100 d-flex align-items-start mt-5">
+                                                        <div
+                                                            class="iconContact d-flex align-items-center justify-content-center">
+                                                            <i class="bi bi-geo-alt-fill"></i>
+                                                        </div>
+                                                        <div class="iconDescription">
+                                                            <p><span>Address:</span> Nablus-Najah nsational university
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="dbox w-100 d-flex align-items-center mt-5">
+                                                        <div
+                                                            class="iconContact d-flex align-items-center justify-content-center">
+                                                            <span class="fa fa-phone"></span>
+                                                        </div>
+                                                        <div class="iconDescription">
+                                                            <p><span>Phone:</span> <a href="tel://0597666545"
+                                                                    class="phoneContact">+970
+                                                                    597-666-545</a></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="dbox w-100 d-flex align-items-center mt-5">
+                                                        <div
+                                                            class="iconContact d-flex align-items-center justify-content-center">
+                                                            <span class="fa fa-paper-plane"></span>
+                                                        </div>
+                                                        <div class="iconDescription">
+                                                            <p><span>Email:</span> <a
+                                                                    href="mailto:s12113576@stu.najah.edu"
+                                                                    class="emailContact">s12113576@stu.najah.edu</a></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="dbox w-100 d-flex align-items-center mt-5">
+                                                        <div
+                                                            class="iconContact d-flex align-items-center justify-content-center">
+                                                            <span class="fa fa-globe"></span>
+                                                        </div>
+                                                        <div class="iconDescription">
+                                                            <p><span>Website</span> <a href="#"
+                                                                    class="websiteContact">codeEditor.com</a></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <%- include('partials/footer')%>

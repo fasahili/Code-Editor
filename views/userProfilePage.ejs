@@ -1,0 +1,400 @@
+<%- include('partials/header') %>
+<%- include('addProjectModal') %>
+<%- include('editProjectModal') %>
+<%- include('editTaskModal') %>
+<%- include('addTask') %>
+<%- include('evaluationModal') %>
+
+
+<div class="row d-flex ProfilePageBody">
+     <div class="col-2">
+          <a href="home"><i class="bi bi-house" id="home-ic-get-home-user"></i></a>
+
+          <div class="LeftAboveComponents">
+               <h1 class="CloudStorageText">
+                    Cloud<br>Storage
+                    <img class="CloudImg" src="/images/cloud-removebg-preview.png">
+               </h1>
+          </div>
+          <hr class="Hr">
+          <div class="container LeftDownComponents">
+               <div class="DropBox">
+                    <button class="DropBoxBut LiftBut"><img class="DropBoxImg LeftImg"
+                              src="/images/Dropbox_Icon.svg.png"></button>
+                    <ii class="DropBoxText Texts">DropBox</ii>
+               </div>
+               <div class="GoogleDrive">
+                    <button class="GoogleDriveBut LiftBut"><img class="GoogleDriveImg LeftImg"
+                              src="/images/googledrive.png"></button>
+                    <ii class="GoogleDriveText Texts">Google Drive</ii>
+               </div>
+               <div class="OneDrive">
+                    <button class="MicrosoftButImg LiftBut"><img class="MicrosoftImg LeftImg"
+                              src="/images/Microsoft_Office_OneDrive_(2019–present).svg.png"></button>
+                    <ii class="OneDriveText Texts">One Drive</ii>
+               </div>
+          </div>
+     </div>
+
+     <div class="col-7 pe-5">
+          <div class="d-flex">
+               <ul class="nav nav-tabs ms-4 mt-auto" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects-div" type="button" role="tab" aria-controls="projects-div" aria-selected="true">Your Projects</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks-div" type="button" role="tab" aria-controls="tasks-div" aria-selected="false">Your Tasks</button>
+                    </li>
+               </ul>
+               <button class="ms-auto px-3 d-flex AddProjectBtn align-items-center"
+                    type="button" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                    Add Project
+               </button>
+          </div>
+          <div class="tab-content Table col-12 px-2">
+               <div class="tab-pane fade show active" id="projects-div" role="tabpanel" aria-labelledby="projects-tab">
+                    <div class="accordion accordion-flush" id="accordionExample">
+                         <% if (message && message !== "This email is already exists") { %>
+                              <%- include('./partials/message',{message,errors}); %>
+                         <% } %>
+                         <% for(var i=0; i<projects.length; i++){%>
+                              <div class="accordion-item">
+                                   <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= projects[i]._id.toString() %>" aria-expanded="false" aria-controls="flush-collapseOne">
+                                             <%= projects[i].projectName %>
+                                        </button>
+                                   </h2>
+                                   <div id="<%= projects[i]._id.toString() %>" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                             <div class="d-flex">
+                                                  <%= projects[i].description%>
+                                                  <div class="ms-auto me-1 dropdown">
+                                                       <a href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-h"></i>
+                                                       </a>
+                                                       <ul class="dropdown-menu">
+                                                            <li>
+                                                                 <button class=" d-flex dropdown-item align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#addTaskModal" data-project-id="<%- projects[i]._id.toString() %>">
+                                                                      Add Task
+                                                                 </button>
+                                                            </li>
+                                                            <li>
+                                                                 <button class=" d-flex dropdown-item align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#editProjectModal" data-project-id="<%- projects[i]._id.toString() %>">
+                                                                      Edit
+                                                                 </button>
+                                                            </li>
+                                                            <li>
+                                                                 <form action="deleteproject" method="post">
+                                                                      <input type="hidden" name="projectID" value="<%= projects[i]._id.toString() %>">
+                                                                      <button type="submit" class="d-flex dropdown-item align-items-center">
+                                                                           Delete
+                                                                      </button>
+                                                                 </form>
+                                                            </li>
+                                                       </ul>
+                                                  </div>
+                                             </div>
+                                             <ul class="mt-3 ProjectTasks">
+                                                  <% for(var j=0;j<tasks[i].length; j++){ %>
+                                                       <% if(!tasks[i][j].completed) { %>
+                                                            <li>
+                                                       <% } else { %>
+                                                            <li class="completedTaskLI">
+                                                       <% } %>
+                                                            <div class="d-flex align-items-center">
+                                                                 <%= tasks[i][j].taskTitle %>
+                                                                 <a href="<%= "/code/task="+tasks[i][j]._id.toString() +"&project="+projects[i]._id.toString()+"/"  %>" class="callLaunchTask p-0 m-0 ms-2">
+                                                                      <img src="/images/launchTask.svg" alt="Launch Task" class="mb-1 launchTask">
+                                                                 </a>
+                                                                 <div class="ms-auto d-flex">
+                                                                      <% if(!tasks[i][j].completed){ %>
+                                                                           <button class=" d-flex dropdown-item align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal" data-task-id="<%= tasks[i][j]._id.toString() %>">
+                                                                                <img src="/images/editTask.svg" alt="Edit Task" class="mb-1 launchTask">
+                                                                           </button>
+                                                                           <form class="" action="deletetask" method="post">
+                                                                                <input type="hidden" name="taskID" value="<%= tasks[i][j]._id.toString() %>">
+                                                                                <button type="submit" class="d-flex dropdown-item align-items-center">
+                                                                                     <img src="/images/deleteTask.svg" alt="Delete Task" class="mb-1 launchTask">
+                                                                                </button>
+                                                                           </form>
+                                                                      <% } else { %>
+                                                                                <button class="d-flex dropdown-item align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#evaluateTaskModal" data-task-id="<%= tasks[i][j]._id.toString() %>">
+                                                                                     <img src="/images/reviewTask.svg" alt="Evaluate Task" class="mb-1 launchTask">
+                                                                                </button>
+                                                                           </form>
+                                                                      <% } %>
+                                                                 </div>
+                                                            </div>
+                                                       </li>
+                                                  <% } %>
+                                             </ul>
+                                        </div>
+                                   </div>
+                              </div>
+                         <% } %>
+                    </div>
+               </div>                       
+               <div class="tab-pane fade px-2" id="tasks-div" role="tabpanel" aria-labelledby="tasks-tab">
+                    <ul class="mt-2 ProjectCollabTasks">
+                         <% for(var i=0;i<collabTasks.length; i++){ %>
+                              <% if(!collabTasks[i].completed) { %>
+                                   <li>
+                              <% } else { %>
+                                   <li class="completedTaskLI">
+                              <% } %>
+                                   <div class="d-flex align-items-center">
+                                        <%= collabTasks[i].taskTitle %>
+                                        <a href="<%= "/code/task="+collabTasks[i]._id.toString() %>" class="callLaunchTask p-0 m-0 ms-2">
+                                             <img src="/images/launchTask.svg" alt="Launch Task" class="mb-1 launchTask">
+                                        </a>
+                                        <div class="ms-auto d-flex">
+                                             <% if(!collabTasks[i].completed){ %>
+                                                  <form class="" action="submittask" method="post">
+                                                       <input type="hidden" name="taskID" value="<%= collabTasks[i]._id.toString() %>">
+                                                       <button type="submit" class="d-flex dropdown-item align-items-center">
+                                                            <img src="/images/taskCompleted.svg" alt="Delete Task" class="mb-1 launchTask">
+                                                       </button>
+                                                  </form>
+                                             <% } %>
+                                        </div>
+                                   </div>
+                              </li>
+                         <% } %> 
+                    </ul>
+               </div>
+          </div>
+     </div>
+
+     <div class="col-3 d-flex flex-column ps-0"> 
+          <div class="d-flex align-items-center text-white pt-4">
+               <img class="ProfImg" src="/images/my-profile-photo.jpg">
+               <div class="ps-5 d-flex flex-column">
+                    <span class="PersonalNameSpan GreyTextColorProfile">
+                         LC Points
+                    </span>
+                    <div class="d-flex align-items-center">
+                         <img src="/images/userPoints.svg" alt="User Points" class="launchTask">
+                         <span class="GreyTextColorProfile">
+                              <%= user.points%> Points
+                         </span>
+                    </div>
+               </div>
+          </div>
+          <% if ((message && message === "This email is already exists") || errors && errors.length > 0) { %>
+               <%- include('./partials/message',{message,errors}); %>
+           <% } %>
+          <div class="mt-5 d-flex flex-column pe-5">  
+               <form action="profile" method="post">
+                    <div class="d-flex align-items-center mb-5">
+                         <div class="d-flex flex-column">
+                              <span class="PersonalNameSpan GreyTextColorProfile" >
+                                   <%= user.firstName %>
+                                   <%= user.lastName %>
+                              </span>
+                              <span class="GreyTextColorProfile">
+                                   <%= user.email %>
+                              </span>
+                         </div>
+                         <button class="ms-auto px-3 d-flex AddProjectBtn align-items-center" type="submit">
+                              Save Profile
+                         </button>
+                    </div>
+                    <div class="col-8 d-flex">
+                         <div>
+                              <h4 class="profileBlueText">
+                                   FIRST NAME
+                              </h4>
+                              <input type="text" class="editProfileInput" value="<%= user.firstName %>" name="firstName" required>
+                         </div>
+                         <div class="">
+                              <h4 class="profileBlueText">
+                                   LAST NAME
+                              </h4>
+                              <input type="text" class="editProfileInput" value="<%= user.lastName %>" name="lastName" required>
+                         </div>
+                    </div>
+
+                    <hr class="FinalHr">
+                    <h4 class="profileBlueText">EMAIL
+                    </h4>
+                    <input type="email" class="editProfileInput"  name="email" value="<%= user.email %>">
+
+                    <hr class="FinalHr">
+                    <h4 class="profileBlueText">
+                         PASSWORD
+                    </h4>
+                    <input type="password" class="editProfileInput" value="" name="password">
+
+                    <hr class="FinalHr">
+
+               </form> 
+          </div>
+          <form action="/logout" method="GET">
+               <button class="btn btn-primary" href="home"  id="logOutButton" type="submit"><h5>LOG OUT
+                    <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-box-arrow-right" id="logOutIcon">
+                         <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                         <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                       </svg>
+                    </h5>
+               </button>
+          </form>
+     </div>
+     <div class="row">
+          <!-- Earnings (Monthly) Card Example -->
+          <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card borderLeftFirst shadow h-100 py-2">
+                  <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                  Projects</div>
+                              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= projects.length %></div>
+                          </div>
+                          <div class="col-auto">
+                              <i class="fas fa-folder fa-2x text-gray-300"></i>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+           <!-- Earnings (Annual) Card Example -->
+           <div class="col-xl-3 col-md-6 mb-4">
+               <div class="card borderLeft shadow h-100 py-2">
+                   <div class="card-body">
+                       <div class="row no-gutters align-items-center">
+                           <div class="col mr-2">
+                               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                   Tasks</div>
+                                   <div class="h5 mb-0 font-weight-bold text-gray-800"><%= tasksNum %></div>
+                           </div>
+                           <div class="col-auto">
+                               <i class="fas fa-file fa-2x text-gray-300"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+          <!-- Tasks Card Example -->
+           <div class="col-xl-3 col-md-6 mb-4">
+               <div class="card borderLeft shadow h-100 py-2">
+                   <div class="card-body">
+                       <div class="row no-gutters align-items-center">
+                           <div class="col mr-2">
+                               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Completed tasks
+                               </div>
+                               <div class="row no-gutters align-items-center">
+                                   <div class="col-auto">
+                                       <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><%= completedTasksPercentage %>%</div>
+                                   </div>
+                                   <div class="col">
+                                       <div class="progress progress-sm mr-2">
+                                         <div class="progressBar bg-info" role="progressbar"
+                                         style="--my-width: <%= completedTasksPercentage %>%;"
+                                         aria-valuenow="50" aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="col-auto">
+                               <i class="fas fa-check fa-2x text-gray-300"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+
+          <!-- Pending Requests Card Example -->
+          <div class="col-xl-3 col-md-6 mb-4">
+               <div class="card borderLeft shadow h-100 py-2">
+                   <div class="card-body">
+                       <div class="row no-gutters align-items-center">
+                           <div class="col mr-2">
+                               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                   Invitations</div>
+                               <div class="h5 mb-0 font-weight-bold text-gray-800"><%= collabTasks.length %></div>
+                           </div>
+                           <div class="col-auto">
+                               <i class="fas fa-users fa-2x text-gray-300"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+
+
+      </div>
+     <script>
+          const taskModal = document.getElementById('addTaskModal');
+          const editProject = document.getElementById('editProjectModal');
+          const editTaskModal = document.getElementById('editTaskModal');
+          const evaluateTaskModal = document.getElementById('evaluateTaskModal');
+
+          taskModal.addEventListener('show.bs.modal', event => setAttributeFunction(event, 'addTask'));
+          editProject.addEventListener('show.bs.modal', event => setAttributeFunction(event, 'editProject'));
+          editTaskModal.addEventListener('show.bs.modal', event => setAttributeFunction(event, 'editTaskModal'));
+          evaluateTaskModal.addEventListener('show.bs.modal', event => setAttributeFunction(event, 'evaluateTaskModal'));
+
+
+          const setAttributeFunction = async (event, modal) => {
+               const targetLink = event.relatedTarget.getAttribute('data-project-id');
+               if (modal === 'addTask'){
+                    taskModal.querySelector('#projectIDTask').setAttribute('value', targetLink);
+                    const collaborators = "<%= formData.collaborators %>";
+                    const description = "<%= formData.description %>";
+                    const pseudoCode = "<%= formData.pseudoCode %>";
+                    const answer = "<%= formData.answer %>";
+                    const projectID = "<%= formData.projectID %>";
+               if(targetLink==projectID)
+               {
+                    const collaboratorsInput = document.getElementById("collaborators").value=collaborators;;
+                    const descriptionInput = document.getElementById("description").value = description;;
+                    const pseudoCodeInput = document.getElementById("pseudoCode").value = pseudoCode;;
+                    const answerInput = document.getElementById("answer").value =answer;
+                    const closeAddTaskModal = document.getElementById('addTaskModal');
+                    closeAddTaskModal.addEventListener('hidden.bs.modal', function () {
+                         document.getElementById("collaborators").value = '';
+                         document.getElementById("description").value = '';
+                         document.getElementById("pseudoCode").value = '';
+                         document.getElementById("answer").value = '';
+                    });
+               }
+               }
+               else if (modal === 'editProject') {
+                    const projectID = event.relatedTarget.getAttribute('data-project-id');
+                    let project;
+                    const getProjectRequest = await fetch(`project?id=${projectID}`)
+                    .then(r => r.json())
+                    .then(data => { project=data; });
+                    editProject.querySelector('#editProjectID').setAttribute('value', projectID);
+                    editProject.querySelector('#projectName').setAttribute('value', project.projectName);
+                    editProject.querySelector('#editDescription').innerText = project.description;
+               }
+               else if (modal === 'editTaskModal') {
+                    const taskID = event.relatedTarget.getAttribute('data-task-id');
+                    let task;
+                    const getTaskRequest = await fetch(`task?id=${taskID}`)
+                    .then(r => r.json())
+                    .then(data => { task=data; });
+                    editTaskModal.querySelector('#editTaskID').setAttribute('value', taskID);
+                    editTaskModal.querySelector('#editTaskTitle').setAttribute('value', task.taskTitle);
+                    editTaskModal.querySelector('#editTaskCollaborators').setAttribute('value', task.collaborators);
+                    editTaskModal.querySelector('#editTaskDescription').innerText= task.description;
+                    editTaskModal.querySelector('#editTaskPseudoCode').innerText =task.pseudoCode;
+                    editTaskModal.querySelector('#editTaskAnswer').innerText= task.answer;
+               }
+               else if ( modal === "evaluateTaskModal"){
+                    const taskID = event.relatedTarget.getAttribute('data-task-id');
+                    let task;
+                    const getTaskRequest = await fetch(`task?id=${taskID}`)
+                    .then(r => r.json())
+                    .then(data => { task=data; });
+                    evaluateTaskModal.querySelector('#evaluateTaskID').setAttribute('value', taskID);
+                    evaluateTaskModal.querySelector('#valueSpan').innerText = task.evaluation;
+                    evaluateTaskModal.querySelector('#evaluationRange').setAttribute('value', task.evaluation);
+                    evaluateTaskModal.querySelector('#evaluateTaskNotes').innerText = task.notes;
+               }
+          }
+     </script>
+     <%- include('partials/footer') %>
+

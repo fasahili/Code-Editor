@@ -1,0 +1,28 @@
+<%- include('../partials/header'); %>
+
+  <div class="container-fluid codeContainer">
+    <div class="row ce_row">
+
+
+
+      <div class="col-2 firstCodeCol" id="div-sidebar-col-1">
+        <%- include('./sidebar'),{folders}; %>
+
+      </div>
+
+      <div class="col-10 secondCodeCol">
+
+        <div class="row firstCodeRow">
+          <%- include('./codeWriting'); %>
+        </div>
+
+        <div class="row secondCodeRow">
+          <%- include('./output'); %>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <%- include('../partials/footer'); %>

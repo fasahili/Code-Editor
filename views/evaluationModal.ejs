@@ -1,0 +1,36 @@
+
+<div class="modal fade" id="evaluateTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content"> 
+        <div class="modal-header">
+          <h5 class="modal-title"  id="exampleModalLabel" >Evaluate Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form class="FromModalAddProject" action="evaluatetask" method="POST">  
+          <div class="modal-body">
+            <div class="mb-2 d-flex">
+              <label for="evalationRange" class="form-label ms-1">Points</label> <span class="ms-1" id="valueSpan"></span>
+              <input type="range" class="ms-auto" min="0" max="5" name="evaluation" id="evaluationRange">
+          </div>
+            <div class="mb-2">
+              <textarea type="text" class="form-control" name="notes" id="evaluateTaskNotes" placeholder="Notes" style="height: 6rem; resize: none;"></textarea>
+            </div>
+            <input type="hidden" id="evaluateTaskID" name="taskID">
+          </div>
+          <div class="d-flex justify-content-center mb-3">
+            <div>
+              <button type="button" class="btn btn-secondary btn-md"  data-bs-dismiss="modal">No,Cancel </button>
+              <button type="submit" class="btn btn-primary btn-md">Yes,Confirm</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> 
+  <script>
+    const evaluationRange = document.getElementById('evaluationRange');
+    const valueSpan = document.getElementById('valueSpan');
+    evaluationRange.addEventListener("input", () =>  {
+      valueSpan.innerText = evaluationRange.value;
+    });
+  </script>

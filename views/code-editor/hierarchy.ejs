@@ -1,0 +1,58 @@
+
+    <ul>
+       
+    </ul>
+    <ul>
+      <% for (let i = 0; i < data.length; i++) { %>
+        <li>
+          <div class="Folder">
+
+            
+             <img src="/images/folder.png" alt="arrow" onclick="toggleFolder(event)"> 
+            <span class="Name" onclick="renameFolder(event)"><%= data[i].name %></span>
+          </div>
+          <% if (data[i].children && data[i].children.length) { %>
+            <ul class="hidden">
+              <% for (let j = 0; j < data[i].children.length; j++) { %>
+                <li>
+                  <div class="<%= data[i].children[j].type %>">
+                    <img src="/images/arrow-right.png" alt="" >
+                    <img src="/images/file.png" alt="" >
+                    <span class="Name"><%= data[i].children[j].name %></span>
+                  </div>
+                </li>
+              <% } %>
+            </ul>
+          <% } %>
+        </li>
+      <% } %>
+    </ul>
+    <script>
+    function toggleFolder(event) {
+  const folder = event.target.parentNode;
+  const children = folder.nextElementSibling;
+  //  const arrow = folder.querySelector("img");
+
+  if (children.classList.contains("hidden")) {
+    children.classList.remove("hidden");
+    arrow.src = "/images/arrow-down.png";
+  } else {
+    children.classList.add("hidden");
+    arrow.src = "/images/arrow-right.png";
+  }
+}
+
+    
+    function renameFolder(event) {
+      const name = event.target;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = name.textContent;
+      input.addEventListener("blur", () => {
+        name.textContent = input.value;
+        name.parentNode.removeChild(input);
+      });
+      name.parentNode.insertBefore(input, name.nextSibling);
+      input.focus();
+    }
+    </script>

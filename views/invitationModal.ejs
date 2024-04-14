@@ -1,0 +1,39 @@
+
+<div class="modal fade" id="invitationBody" tabindex="-1" aria-labelledby="invitationTitel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="invitationTitel">Invitation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="invitation" method="POST">
+                <div class="modal-body">
+                    <div class="form-floating d-flex justify-content-center">
+                        <input class="form-control h-20" type="email" id="email" placeholder="name@example.com" name="email" required />
+                        <label for="email">name@example.com</label>
+                        <input  type="hidden" id="invitationTaskID" name="taskID"/>
+                        <input  type="hidden" id="invitationProjectID" name="projectID"/>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center w-100">
+                    <button type="submit" class="btn btn-primary w-25">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (event) => {
+        const email = form.querySelector("#email").value;
+        const isValidEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+            email
+        );
+        if (!isValidEmail) {
+            alert("Please enter a valid email address");
+            return;
+        }
+        event.preventDefault();
+        form.submit();
+    });
+</script>

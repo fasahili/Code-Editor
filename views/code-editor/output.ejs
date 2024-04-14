@@ -1,0 +1,95 @@
+<div class="container">
+    <label for="OutputTitle" id="OutputLabel">Output </label>
+    <div rows="5" id="OutputTitle" name="OutputTitle"></div>
+    <button type="button" class="btn btn-link" id="OutputButton">
+        <svg
+            id="OutputIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            class="bi bi-play-fill"
+            viewBox="0 0 16 16"
+        >
+            <path
+                d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"
+            />
+        </svg>
+    </button>
+    <div class="OutputDiv">
+        <textarea class="OutputText col-12" id="OutputText" readonly> </textarea>
+        <picture class="OutputImageContainer">
+            <img id="OutputImage" class="OutputImage" src="" />
+        </picture>
+    </div>
+</div>
+
+<script>
+    const interpreterButton = document.getElementById("OutputButton");
+    interpreterButton.addEventListener("click", async () => {
+        try {
+
+            const urlString =  window.location.href;
+            let queryString = new URLSearchParams(urlString);
+            const [taskID, projectID] = queryString.values();
+            let pythonInputFromEditor = document.getElementById("Editor").value;
+            const outputImage = document.getElementById("OutputImage");
+            let outputImageBase64 = "";
+            const output = document.getElementById("OutputText");
+            const inputFunctionHandler = new InputFunctionHandler(pythonInputFromEditor);
+            while (inputFunctionHandler.hasInputFunction()) {
+                pythonInputFromEditor = inputFunctionHandler.handleInputFunction();
+            }
+            const response = await fetch("/run_python", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ pythonInputFromEditor, outputImageBase64,taskID,projectID}),
+            });
+
+
+            const data = await response.json();
+            output.value = data.output;
+            if (data.outputMatPlotLibPhoto) {
+                outputImage.src = `data:image/png;base64,${data.outputMatPlotLibPhoto}`;
+            } else {
+                outputImage.src = "";
+                outputImage.style.width = "0%";
+                outputImage.style.height = "0%";
+                outputImage.style.float = "none";
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).render("../serverError", { error: error.message });
+        }
+    });
+
+    class InputFunctionHandler {
+        constructor(pythonInput) {
+            this.pythonInput = pythonInput;
+        }
+
+        /**
+         * A method that handles a python input function call without parsing (string)
+         * @returns {string} pythonInput
+         */
+        handleInputFunction() {
+            const regex = /input\(\s*("?)(.*?)"?\s*\)/g;
+            let match = regex.exec(this.pythonInput);
+            while (match != null) {
+                let inputMessage = match[2];
+                const input = prompt(inputMessage, "");
+                this.pythonInput = this.pythonInput.replace(match[0], `"${input}"`);
+                match = regex.exec(this.pythonInput);
+            }
+            return this.pythonInput;
+        }
+        /**
+         * A method that checks if the python input contains an input function call without parsing
+         * @returns {boolean} true if the python input contains an input function call without parsing
+         */
+        hasInputFunction() {
+            const regex = /input\(\s*("?)(.*?)"?\s*\)/g;
+            return regex.test(this.pythonInput);
+        }
+    }
+</script>
